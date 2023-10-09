@@ -1,0 +1,15 @@
+int doubleWhile() {
+  int i;
+  i = 5;
+  int j;
+  j = 7;
+  while (i < 100) {
+        j = j + 1;
+        if (j < 10) continue;
+        i = i + 3;
+        if (i > 30) break;
+    }
+
+int main() {
+  return doubleWhile();
+}

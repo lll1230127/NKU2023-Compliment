@@ -1,0 +1,35 @@
+int ifElseIf() {
+  int a;
+  a = getint( );
+  int b;
+  b = getint( );
+  // 测试if else语句
+  // 测试小于等于分支
+  if(a <= 4) {
+    // 测试不同位置的return指令
+    // 测试if 语句和大于等于语句
+    if(a+10>=12){
+        return 1;
+    }
+    return 2;
+  }
+  else {
+    // 测试立即数的大于语句和十六进制表示比较
+  if(10 < 0xb) {
+    // 测试if-elif-else语句
+    // 测试等于语句
+    if (b == 10)
+      a = 25;
+    // 测试不等于语句和非语句
+    else if (!(b != 5))
+      a = 15;
+    else
+      a = -10;
+  }
+  return a;
+}
+
+int main(){
+  int c = ifElseIf()；
+  putint(c);
+}
