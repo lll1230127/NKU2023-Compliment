@@ -1,0 +1,256 @@
+Grammar
+
+    0 $accept: lines $end
+
+    1 lines: lines expr ';'
+    2      | lines ';'
+    3      | /* empty */
+
+    4 expr: expr ADD expr
+    5     | expr SUB expr
+    6     | expr MUL expr
+    7     | expr DIV expr
+    8     | LEFTPAR expr RIGHTPAR
+    9     | SUB expr
+   10     | NUMBER
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+';' (59) 1 2
+error (256)
+ADD (258) 4
+SUB (259) 5 9
+MUL (260) 6
+DIV (261) 7
+NUMBER (262) 10
+LEFTPAR (263) 8
+RIGHTPAR (264) 8
+UMINUS (265)
+
+
+Nonterminals, with rules where they appear
+
+$accept (12)
+    on left: 0
+lines (13)
+    on left: 1 2 3, on right: 0 1 2
+expr (14)
+    on left: 4 5 6 7 8 9 10, on right: 1 4 5 6 7 8 9
+
+
+state 0
+
+    0 $accept: . lines $end
+
+    $default  reduce using rule 3 (lines)
+
+    lines  go to state 1
+
+
+state 1
+
+    0 $accept: lines . $end
+    1 lines: lines . expr ';'
+    2      | lines . ';'
+
+    $end     shift, and go to state 2
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+    ';'      shift, and go to state 6
+
+    expr  go to state 7
+
+
+state 2
+
+    0 $accept: lines $end .
+
+    $default  accept
+
+
+state 3
+
+    9 expr: SUB . expr
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 8
+
+
+state 4
+
+   10 expr: NUMBER .
+
+    $default  reduce using rule 10 (expr)
+
+
+state 5
+
+    8 expr: LEFTPAR . expr RIGHTPAR
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 9
+
+
+state 6
+
+    2 lines: lines ';' .
+
+    $default  reduce using rule 2 (lines)
+
+
+state 7
+
+    1 lines: lines expr . ';'
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+
+    ADD  shift, and go to state 10
+    SUB  shift, and go to state 11
+    MUL  shift, and go to state 12
+    DIV  shift, and go to state 13
+    ';'  shift, and go to state 14
+
+
+state 8
+
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+    9     | SUB expr .
+
+    $default  reduce using rule 9 (expr)
+
+
+state 9
+
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+    8     | LEFTPAR expr . RIGHTPAR
+
+    ADD       shift, and go to state 10
+    SUB       shift, and go to state 11
+    MUL       shift, and go to state 12
+    DIV       shift, and go to state 13
+    RIGHTPAR  shift, and go to state 15
+
+
+state 10
+
+    4 expr: expr ADD . expr
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 16
+
+
+state 11
+
+    5 expr: expr SUB . expr
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 17
+
+
+state 12
+
+    6 expr: expr MUL . expr
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 18
+
+
+state 13
+
+    7 expr: expr DIV . expr
+
+    SUB      shift, and go to state 3
+    NUMBER   shift, and go to state 4
+    LEFTPAR  shift, and go to state 5
+
+    expr  go to state 19
+
+
+state 14
+
+    1 lines: lines expr ';' .
+
+    $default  reduce using rule 1 (lines)
+
+
+state 15
+
+    8 expr: LEFTPAR expr RIGHTPAR .
+
+    $default  reduce using rule 8 (expr)
+
+
+state 16
+
+    4 expr: expr . ADD expr
+    4     | expr ADD expr .
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+
+    MUL  shift, and go to state 12
+    DIV  shift, and go to state 13
+
+    $default  reduce using rule 4 (expr)
+
+
+state 17
+
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    5     | expr SUB expr .
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+
+    MUL  shift, and go to state 12
+    DIV  shift, and go to state 13
+
+    $default  reduce using rule 5 (expr)
+
+
+state 18
+
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    6     | expr MUL expr .
+    7     | expr . DIV expr
+
+    $default  reduce using rule 6 (expr)
+
+
+state 19
+
+    4 expr: expr . ADD expr
+    5     | expr . SUB expr
+    6     | expr . MUL expr
+    7     | expr . DIV expr
+    7     | expr DIV expr .
+
+    $default  reduce using rule 7 (expr)

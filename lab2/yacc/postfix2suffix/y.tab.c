@@ -68,26 +68,29 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 2 "test.y"
+#line 1 "postfix2suffix.y"
 
-//(1)包含头文件
+//一、预处理部分
+//1、包含我们所需的头文件
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
+#include<string.h> 
+#include<ctype.h>
 
-//(2)确定yacc语法分析栈的作用类型，在本实验中是字符串
-#define YYSTYPE char* // 用于确定$$的变量类型
+//2、定义我们的yacc程序最终d:\weixin\WeChat Files\wxid_4kpnr6wfg5o722\FileStorage\File\2023-10\tran.y产生值的类型,这里由于是中缀生成后缀,故为字符串类型
+#ifndef YYSTYPE
+#define YYSTYPE char*
+#endif
 
-//(3)声明全局变量，抛出函数声明
-int yylex();  //我们自定义的词法分析器
-extern int yyparse(); //yacc生成的语法分析器
-void yyerror(char* s); //错误输出
-char idStr[101];  //标识符
-char numStr[101]; //操作数
+//3、定义所需的函数和全局变量,从上到下为词法分析器、yacc生成的语法分析器、输入文件、错误输出函数
+int yylex();
+extern int yyparse();
+FILE* yyin;
+void yyerror(const char* s);
 
 
 /* Line 189 of yacc.c  */
-#line 91 "y.tab.c"
+#line 94 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -114,27 +117,25 @@ char numStr[101]; //操作数
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     NUMBER = 258,
-     ID = 259,
-     ADD = 260,
-     SUB = 261,
-     MUL = 262,
-     DIV = 263,
-     LEFT_PAR = 264,
-     RIGHT_PAR = 265,
-     UMINUS = 266
+     ADD = 258,
+     SUB = 259,
+     MUL = 260,
+     DIV = 261,
+     NUMBER = 262,
+     LEFTPAR = 263,
+     RIGHTPAR = 264,
+     UMINUS = 265
    };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define ID 259
-#define ADD 260
-#define SUB 261
-#define MUL 262
-#define DIV 263
-#define LEFT_PAR 264
-#define RIGHT_PAR 265
-#define UMINUS 266
+#define ADD 258
+#define SUB 259
+#define MUL 260
+#define DIV 261
+#define NUMBER 262
+#define LEFTPAR 263
+#define RIGHTPAR 264
+#define UMINUS 265
 
 
 
@@ -151,7 +152,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 155 "y.tab.c"
+#line 156 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -366,20 +367,20 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   37
+#define YYLAST   28
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  12
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  12
+#define YYNRULES  11
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  21
+#define YYNSTATES  20
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   266
+#define YYMAXUTOK   265
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -392,7 +393,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    12,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    11,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -413,7 +414,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11
+       5,     6,     7,     8,     9,    10
 };
 
 #if YYDEBUG
@@ -422,23 +423,23 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     7,    10,    11,    15,    19,    23,    27,
-      31,    34,    36
+      31,    34
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      14,     0,    -1,    14,    15,    12,    -1,    14,    12,    -1,
-      -1,    15,     5,    15,    -1,    15,     6,    15,    -1,    15,
-       7,    15,    -1,    15,     8,    15,    -1,     9,    15,    10,
-      -1,     6,    15,    -1,     3,    -1,     4,    -1
+      13,     0,    -1,    13,    14,    11,    -1,    13,    11,    -1,
+      -1,    14,     3,    14,    -1,    14,     4,    14,    -1,    14,
+       5,    14,    -1,    14,     6,    14,    -1,     8,    14,     9,
+      -1,     4,    14,    -1,     7,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    39,    39,    40,    41,    45,    50,    56,    62,    68,
-      69,    74,    79
+       0,    36,    36,    38,    39,    42,    47,    52,    57,    62,
+      63,    68
 };
 #endif
 
@@ -447,9 +448,8 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NUMBER", "ID", "ADD", "SUB", "MUL",
-  "DIV", "LEFT_PAR", "RIGHT_PAR", "UMINUS", "';'", "$accept", "line",
-  "expr", 0
+  "$end", "error", "$undefined", "ADD", "SUB", "MUL", "DIV", "NUMBER",
+  "LEFTPAR", "RIGHTPAR", "UMINUS", "';'", "$accept", "lines", "expr", 0
 };
 #endif
 
@@ -459,22 +459,22 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,    59
+     265,    59
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    13,    14,    14,    14,    15,    15,    15,    15,    15,
-      15,    15,    15
+       0,    12,    13,    13,    13,    14,    14,    14,    14,    14,
+      14,    14
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     3,     2,     0,     3,     3,     3,     3,     3,
-       2,     1,     1
+       2,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -482,31 +482,29 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       4,     0,     1,    11,    12,     0,     0,     3,     0,    10,
-       0,     0,     0,     0,     0,     2,     9,     5,     6,     7,
-       8
+       4,     0,     1,     0,    11,     0,     3,     0,    10,     0,
+       0,     0,     0,     0,     2,     9,     5,     6,     7,     8
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     8
+      -1,     1,     7
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -7
+#define YYPACT_NINF -3
 static const yytype_int8 yypact[] =
 {
-      -7,     0,    -7,    -7,    -7,    19,    19,    -7,    12,    -7,
-      24,    19,    19,    19,    19,    -7,    -7,    29,    -6,    -3,
-      -7
+      -3,     0,    -3,    -2,    -3,    -2,    -3,    10,    -3,    19,
+      -2,    -2,    -2,    -2,    -3,    -3,    21,    21,    -3,    -3
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,     2
+      -3,    -3,     7
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -516,27 +514,24 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       2,    13,    14,     3,     4,    14,     5,     9,    10,     6,
-       0,     0,     7,    17,    18,    19,    20,    11,    12,    13,
-      14,     0,     3,     4,    15,     5,     0,     0,     6,    11,
-      12,    13,    14,     0,    16,    12,    13,    14
+       2,     0,     3,     0,     3,     4,     5,     4,     5,     0,
+       8,     6,     9,    10,    11,    12,    13,    16,    17,    18,
+      19,    14,    10,    11,    12,    13,    12,    13,    15
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     7,     8,     3,     4,     8,     6,     5,     6,     9,
-      -1,    -1,    12,    11,    12,    13,    14,     5,     6,     7,
-       8,    -1,     3,     4,    12,     6,    -1,    -1,     9,     5,
-       6,     7,     8,    -1,    10,     6,     7,     8
+       0,    -1,     4,    -1,     4,     7,     8,     7,     8,    -1,
+       3,    11,     5,     3,     4,     5,     6,    10,    11,    12,
+      13,    11,     3,     4,     5,     6,     5,     6,     9
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    14,     0,     3,     4,     6,     9,    12,    15,    15,
-      15,     5,     6,     7,     8,    12,    10,    15,    15,    15,
-      15
+       0,    13,     0,     4,     7,     8,    11,    14,    14,    14,
+       3,     4,     5,     6,    11,     9,    14,    14,    14,    14
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1350,101 +1345,88 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 39 "test.y"
-    { printf("%s\n", (yyvsp[(2) - (3)])); }
+#line 36 "postfix2suffix.y"
+    { 
+                printf("Convert to a suffix expression:\n%s\nPlease enter a postfix  expression:\n", (yyvsp[(2) - (3)])); }
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 45 "test.y"
+#line 42 "postfix2suffix.y"
     { 
-        (yyval) = (char*)malloc(100*sizeof(char)); 
-        strcpy((yyval),(yyvsp[(1) - (3)])); strcat((yyval),(yyvsp[(3) - (3)])); 
-        strcat((yyval),"+"); 
-    }
+            (yyval) = (char*)malloc(strlen((yyvsp[(1) - (3)]))+strlen((yyvsp[(3) - (3)]))+4); 
+            strcpy((yyval),(yyvsp[(1) - (3)])); strcat((yyval),(yyvsp[(3) - (3)])); strcat((yyval),"+ "); 
+            // free($1);free($3); 
+            }
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 50 "test.y"
+#line 47 "postfix2suffix.y"
     { 
-            (yyval) = (char*)malloc(100*sizeof(char)); 
-            strcpy((yyval),(yyvsp[(1) - (3)])); 
-            strcat((yyval),(yyvsp[(3) - (3)])); 
-            strcat((yyval),"- "); 
-        }
+            (yyval) = (char*)malloc(strlen((yyvsp[(1) - (3)]))+strlen((yyvsp[(3) - (3)]))+4); 
+            strcpy((yyval),(yyvsp[(1) - (3)])); strcat((yyval),(yyvsp[(3) - (3)])); strcat((yyval),"- ");
+            // free($1);free($3); 
+            }
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 56 "test.y"
+#line 52 "postfix2suffix.y"
     { 
-            (yyval) = (char*)malloc(100*sizeof(char)); 
-            strcpy((yyval),(yyvsp[(1) - (3)])); 
-            strcat((yyval),(yyvsp[(3) - (3)])); 
-            strcat((yyval),"* "); 
-        }
+            (yyval) = (char*)malloc(strlen((yyvsp[(1) - (3)]))+strlen((yyvsp[(3) - (3)]))+4); 
+            strcpy((yyval),(yyvsp[(1) - (3)])); strcat((yyval),(yyvsp[(3) - (3)])); strcat((yyval),"* ");
+            free((yyvsp[(1) - (3)]));free((yyvsp[(3) - (3)])); 
+            }
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 62 "test.y"
+#line 57 "postfix2suffix.y"
     { 
-            (yyval) = (char*)malloc(100*sizeof(char)); 
-            strcpy((yyval),(yyvsp[(1) - (3)])); 
-            strcat((yyval),(yyvsp[(3) - (3)]));
-            strcat((yyval),"/ "); 
-        }
+            (yyval) = (char*)malloc(strlen((yyvsp[(1) - (3)]))+strlen((yyvsp[(3) - (3)]))+4); 
+            strcpy((yyval),(yyvsp[(1) - (3)])); strcat((yyval),(yyvsp[(3) - (3)])); strcat((yyval),"/ ");
+            free((yyvsp[(1) - (3)]));free((yyvsp[(3) - (3)])); 
+            }
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 68 "test.y"
-    { (yyval) = (yyvsp[(2) - (3)]); }
+#line 62 "postfix2suffix.y"
+    { (yyval)=(yyvsp[(2) - (3)]);}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 69 "test.y"
-    {
-            (yyval) = (char*)malloc(50*sizeof(char)); 
-            strcpy((yyval),"- "); 
-            strcat((yyval),(yyvsp[(2) - (2)])); 
-         }
+#line 63 "postfix2suffix.y"
+    { 
+            (yyval) = (char*)malloc(strlen((yyvsp[(2) - (2)]))+2); 
+            strcpy((yyval),"-"); strcat((yyval),(yyvsp[(2) - (2)]));
+            free((yyvsp[(2) - (2)])); 
+            }
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 74 "test.y"
+#line 68 "postfix2suffix.y"
     { 
-            (yyval) = (char*)malloc(100*sizeof(char)); 
-            strcpy((yyval),(yyvsp[(1) - (1)])); 
-            strcat((yyval)," "); 
-        }
-    break;
-
-  case 12:
-
-/* Line 1455 of yacc.c  */
-#line 79 "test.y"
-    { 
-            (yyval) = (char*)malloc(100*sizeof(char)); 
-            strcpy((yyval),(yyvsp[(1) - (1)]));
-            strcat((yyval)," "); 
-        }
+            (yyval) = (char*)malloc(strlen((yyvsp[(1) - (1)]))+2); 
+            strcpy((yyval),(yyvsp[(1) - (1)])); strcat((yyval)," "); 
+            free((yyvsp[(1) - (1)]));
+            }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1448 "y.tab.c"
+#line 1430 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1656,75 +1638,72 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 85 "test.y"
+#line 75 "postfix2suffix.y"
 
 
-//3.用户子程序部分
-int yylex() //自定义的词法分析器
+// programs section
+
+int yylex()
 {
-    int ch;
+    char t;
     while(1){
-        ch=getchar();
-        if(ch==' ' || ch=='\t' || ch=='\n') //忽略空白符
-            ;
-        else if ((ch>='0' && ch<= '9')){ //如果是数字，就一直读取，直到不是数字
-            int i=0;
-            while((ch>='0'&&ch<='9')){
-                numStr[i]=ch;
-                ch=getchar();
+        t=getchar();
+        if(t==' '||t=='\t'||t=='\n'){
+            //do noting
+        }
+        else if(isdigit(t)){
+            //TODO:解析多位数字返回数字类型 
+            //对于数字,一直读取直到不是数字
+            int i = 0; 
+            //这里由于c语言特性,需要注意应该动态分配,直接声明的字符数组会产生随机值
+            char *numStr=(char *)malloc(15 * sizeof(char));
+            while(isdigit(t)){
+                numStr[i] = t;
+                t = getchar();
                 i++;
             }
             numStr[i]='\0';
-            yylval=numStr; //yylval是lex和yacc沟通的变量，赋值给了识别出的标识符
-            ungetc(ch,stdin); //将首个非数字字符退回输入流
+            //yylval是此时yylex与后续bison处理的沟通值,会赋值给此时识别出的标识符
+            yylval = numStr;
+            //将现在读取到的非数字字符退回输入流
+            ungetc(t,stdin); 
             return NUMBER;
         }
-        //识别出标识符，一直读到非字母数字下划线的字符
-        else if ((ch>='a'&& ch<='z') || (ch>='A' && ch<='Z') || (ch=='_')){
-            int i=0;
-            while((ch>='a'&& ch<='z') || (ch>='A' && ch<='Z') || (ch=='_') || (ch>='0' && ch<='9')){
-                idStr[i]=ch;
-                i++;
-                ch=getchar();
-            }
-            idStr[i]='\0';
-            yylval=idStr;
-            ungetc(ch,stdin);
-            return ID;
+        else if(t=='+'){
+            return ADD;
         }
-        else if(ch=='+') {
-            return ADD;  
-        }
-        else if(ch=='-'){
+        else if(t=='-'){
             return SUB;
         }
-        else if(ch=='*'){
+        //TODO:识别其他符号
+        else if(t=='*'){
             return MUL;
         }
-        else if(ch=='/'){
+        else if(t=='/'){
             return DIV;
         }
-        else if(ch=='('){
-            return LEFT_PAR;
+        else if(t=='('){
+            return LEFTPAR;
         }
-        else if(ch==')'){
-            return RIGHT_PAR;
+        else if(t==')'){
+            return RIGHTPAR;
         }
-        else {
-            return ch; //处理其他字符，特别是分号
+        else{
+            return t;
         }
     }
 }
 
 int main(void)
 {
-    FILE* cin = stdin;
+    yyin=stdin;
     do{
+        printf("Please enter a postfix expression:\n");
         yyparse();
-    } while(!feof(cin));
+    }while(!feof(yyin));
     return 0;
 }
-void yyerror(char* s){
-    fprintf(stderr, "error: %s\n", s);
+void yyerror(const char* s){
+    fprintf(stderr,"Parse error: %s\n",s);
     exit(1);
 }

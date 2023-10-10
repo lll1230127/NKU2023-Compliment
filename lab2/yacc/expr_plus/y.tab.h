@@ -39,33 +39,48 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     NUMBER = 258,
-     ID = 259,
-     ADD = 260,
-     SUB = 261,
-     MUL = 262,
-     DIV = 263,
-     LEFT_PAR = 264,
-     RIGHT_PAR = 265,
-     UMINUS = 266
+     ADD = 258,
+     SUB = 259,
+     MUL = 260,
+     DIV = 261,
+     NUMBER = 262,
+     LEFTPAR = 263,
+     RIGHTPAR = 264,
+     EQUAL = 265,
+     IDENT = 266,
+     UMINUS = 267
    };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define ID 259
-#define ADD 260
-#define SUB 261
-#define MUL 262
-#define DIV 263
-#define LEFT_PAR 264
-#define RIGHT_PAR 265
-#define UMINUS 266
+#define ADD 258
+#define SUB 259
+#define MUL 260
+#define DIV 261
+#define NUMBER 262
+#define LEFTPAR 263
+#define RIGHTPAR 264
+#define EQUAL 265
+#define IDENT 266
+#define UMINUS 267
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+
+/* Line 1676 of yacc.c  */
+#line 27 "expr_plus.y"
+
+        double  val;  //运算式的值
+        struct symbol* sym; //符号
+
+
+
+/* Line 1676 of yacc.c  */
+#line 83 "y.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
