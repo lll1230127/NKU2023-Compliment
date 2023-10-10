@@ -1,0 +1,12 @@
+int recursiveFactorial(int n) {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * recursiveFactorial(n - 1);
+    }
+}
+
+int main() {
+    int result = recursiveFactorial(5);
+    return 0;
+}

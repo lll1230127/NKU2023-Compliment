@@ -1,0 +1,36 @@
+int ifElseIf() {
+  int a;
+  a = 5;
+  int b;
+  b = 10;
+  // 测试if else语句
+  // 测试小于等于和大于等于，以及十六进制表示
+  if(a <= 6 || b >= 0xb) {
+    // 测试不同位置的return指令
+    // 测试if 语句
+    if(a+10>0){
+        return a+2;
+    }
+    return a+1;
+  }
+  else {
+    // 测试小于等于和大于等于，以及或逻辑和十六进制表示
+  if(a <= 6 || b >= 0xb) {
+    // 测试if-elif-else语句
+    // 测试等于和不等于，以及且逻辑
+    if (b == 10 && a != 5)
+      a = 25;
+    // 测试小于和大于，以及非逻辑
+    else if (!(b > 10 && a < -5))
+      a = a + 15;
+    else
+      // 测试单目运算符
+      a = --a;
+  }
+
+  return a;
+}
+
+int main(){
+  return ifElseIf();
+}
