@@ -18,8 +18,7 @@ extern int yyparse();
 FILE* yyin;
 void yyerror(const char* s);
 
-//符号表插入函数
-int insert(char s);
+
 %}
 
 //二、单词定义和优先级定义
@@ -35,16 +34,16 @@ int insert(char s);
 %%
 //该非终结符表示输入的全部信息,最新一行为输入的正则表达式
 lines   :       lines exprs ';' { 
-                    printTransitionMatrix($2);
-                    printEmptyTransitionMatrix($2);
+                    // printTransitionMatrix($2);
+                    // printEmptyTransitionMatrix($2);
                     setAcceptState($2,$2->num_states-1);
-                    printf("%d\n",runNFA($2,"abaad"));
-                    DFA dfa;
+                    // printf("%d\n",runNFA($2,"abaad"));
+                    DFA dfa,dfa2;
                     convertNFAToDFA(&dfa, $2);
-                    // hopcroftMinimizeDFA(&dfa);
-                    printTransitionMatrix(&dfa);
-                    printEmptyTransitionMatrix(&dfa);   
-                    printf("%d\n",runDFA(&dfa,"abaad"));
+                    // hopcroftMinimizeDFA(&dfa,&dfa2);
+                    printTransitionMatrix(&dfa2);
+                    printEmptyTransitionMatrix(&dfa2);   
+                    printf("%d\n",runDFA(&dfa2,"abaad"));
                     $$ = $2;
                 }
         |       lines ';'
@@ -113,7 +112,6 @@ expr    :       expr '|' expr   {
             }
         |       CHAR { 
             int temp = $1->start_state;
-            printf("%d,%d\n",temp,sym_maps_size);
             initializeDFA($1, 2 ,sym_maps_size);
             setTransition($1, 0, temp, 1);
             $$ = $1;
@@ -179,32 +177,12 @@ int yylex()
         
     }
 }
-int insert(char s){
-    // //为空集留一个位置
-    // if(sym_maps[0] == 0){
-    //     sym_maps[0] = '_';
-    //     sym_maps_size ++;
-    // }
-    for(int i = 0;i<100;i++){
-        //已存在该符号,返回并前置(优先队列待实现)
-        if(sym_maps[i] == s)
-            return i;
-        //符号表项不存在,表明已到结尾,新建一个即可
-        if(sym_maps[i] == 0){ 
-            sym_maps[i]=s;
-            sym_maps_size ++;
-            return i;
-        }
-    }
-    yyerror("The Symbol Table is full!");
-	exit(1);
-}
 
 int main(void)
 {
     yyin=stdin;
     do{
-        printf("Please enter a postfix expression:\n");
+        printf("Please enter a expression:\n");
         yyparse();
     }while(!feof(yyin));
     return 0;

@@ -3,6 +3,7 @@
 // 初始化符号表
 char sym_maps[100] = {0};
 int sym_maps_size = 0;
+DFA * NFA_result;
 
 // 初始化DFA
 void initializeDFA(DFA *dfa, int num_states, int num_symbols) {
@@ -62,6 +63,20 @@ int find(char s){
         }
     }
 } 
+
+int insert(char s){
+    for(int i = 0;i<100;i++){
+        //已存在该符号,返回并前置(优先队列待实现)
+        if(sym_maps[i] == s)
+            return i;
+        //符号表项不存在,表明已到结尾,新建一个即可
+        if(sym_maps[i] == 0){ 
+            sym_maps[i]=s;
+            sym_maps_size ++;
+            return i;
+        }
+    }
+}
 
 // 计算状态的ε-closure
 void epsilonClosure(DFA *dfa, int state, bool *visited, int *closure) {
@@ -307,84 +322,62 @@ void mergeNFA(DFA *dfa1, DFA *dfa2, int Connection) {
 }
 
 // Hopcroft 最小化算法
-void hopcroftMinimizeDFA(DFA *dfa) {
-    int num_states = dfa->num_states;
-    int num_symbols = dfa->num_symbols;
-    int partitions[MAX_STATES];
-    int *new_partitions = (int *)malloc(num_states * sizeof(int));
-
-    for (int i = 0; i < num_states; i++) {
-        partitions[i] = dfa->accept_states[i];
+void hopcroftMinimizeDFA(DFA *dfa,DFA * new_dfa) {
+    int par_num = 2;
+    int partitions[dfa->num_states];
+    // 初始划分为两个类，分为终结态和非终结态(0和1)
+    for(int i =0 ;i<dfa->num_states;i++){
+        if(dfa->accept_states[i] == 1){
+            partitions[i] = 0;
+            partitions[i] = 1;
+        }
+        else {
+            partitions[i] = 1;
+            partitions[i] = 0;
+        }
     }
-
-    while (true) {
-        int num_partitions = 0;
-        for (int i = 0; i < num_states; i++) {
-            new_partitions[i] = -1;
-        }
-
-        for (int p = 0; p < num_states; p++) {
-            if (new_partitions[p] != -1) {
-                continue;
-            }
-
-            int split = -1;
-            for (int i = 0; i < num_symbols; i++) {
-                int to_state = dfa->transition[p][i];
-                if (split == -1) {
-                    split = partitions[to_state];
-                } else if (split != partitions[to_state]) {
-                    split = -2;
-                    break;
-                }
-            }
-
-            if (split == -1) {
-                split = num_partitions++;
-            }
-
-            for (int i = 0; i < num_states; i++) {
-                if (partitions[i] == p) {
-                    new_partitions[i] = split;
-                }
-            }
-        }
-
-        if (num_partitions == num_states) {
-            break;
-        }
-
-        for (int i = 0; i < num_states; i++) {
-            partitions[i] = new_partitions[i];
-        }
-
-        for (int p = 0; p < num_partitions; p++) {
-            int new_state = -1;
-            for (int i = 0; i < num_states; i++) {
-                if (partitions[i] == p) {
-                    if (new_state == -1) {
-                        new_state = i;
-                    } else {
-                        for (int j = 0; j < num_states; j++) {
-                            if (partitions[j] == p) {
-                                dfa->transition[j][0] = new_state;
-                            }
+    while(true){
+        int mark =0;
+        //遍历字符，找到一个能够划分结果的
+        for (int i=0;i<dfa->num_symbols;i++){
+            for(int j =0 ;j<par_num;j++){
+                int remember = -1;
+                int new_partition[dfa->num_states];
+                for(int k =0; k<dfa->num_states;k++){
+                    if(partitions[k] == j && dfa->transition[k][i]!=-1){
+                        int to_state = dfa->transition[k][i];
+                        if(remember==-1){
+                            remember = partitions[to_state];
+                            new_partition[k] = 0;
+                        }
+                        else if(partitions[to_state]!= remember){
+                            mark = 1;
+                            new_partition[k] = 1;
                         }
                     }
                 }
+                //按照归类划分，将其他组踢出去，标记mark为1
+                if(mark == 1){
+                    for(int k =0; k<dfa->num_states;k++){
+                        if( new_partition[k] == 1){
+                            partitions[k] = par_num;
+                        }
+                    }
+                    par_num++;
+                    break;
+                }
             }
+            if(mark == 1) break;
         }
-
-        num_states = num_partitions;
+        if(mark == 0) break;
     }
-
-    // 更新DFA的状态数和接受状态集合
-    dfa->num_states = num_states;
-    for (int i = 0; i < num_states; i++) {
-        dfa->accept_states[i] = dfa->accept_states[dfa->transition[i][0]];
+    initializeDFA(new_dfa,par_num,dfa->num_symbols);
+    for (int i=0;i<dfa->num_symbols;i++){
+        for(int k =0;k<dfa->num_states;k++){
+            if(dfa->accept_states[k] == 1) setAcceptState(new_dfa,partitions[k]);
+            setTransition(new_dfa,partitions[k],i,dfa->transition[k][i]);
+        }
     }
-
-    free(new_partitions);
 }
 
 // 打印转移结果
@@ -429,28 +422,64 @@ void printEmptyTransitionMatrix(DFA *dfa) {
     // }
 }
 
-// int main() {
-//     DFA dfa;
+int main() {
+    // // DFA/NFA接口测试
+    // DFA dfa;
+    // int num_states = 3;
+    // int num_symbols = 2; // 假设字母表包含26个小写字母
+
+    // initializeDFA(&dfa, num_states, num_symbols);
+    // setAcceptState(&dfa, 2);
+
+    // // 设置状态转移
+    // setTransition(&dfa, 0, 0, 1);
+    // setTransition(&dfa, 0, 1, 0);
+    // setTransition(&dfa, 1, 0, 2);
+    // setTransition(&dfa, 1, 1, 0);
+    // setTransition(&dfa, 2, 0, 1);
+    // setTransition(&dfa, 2, 1, 2);
+
+    // printTransitionMatrix(&dfa);
+
+    // //由于符号表插入在yacc中词法分析完成，这里我们手动插入符号表
+    // insert('a');
+    // insert('b');
+
+    // const char *input = "abbaab";
+    // if (runDFA(&dfa, input)) {
+    //     printf("Accepted\n");
+    // } else {
+    //     printf("Rejected\n");
+    // }
+
+    // input = "abbaaba";
+    // if (runDFA(&dfa, input)) {
+    //     printf("Accepted\n");
+    // } else {
+    //     printf("Rejected\n");
+    // }
+    DFA dfa;
+    DFA dfa2;
     
-//     int num_states = 5;
-//     int num_symbols = 2; // 假设字母表大小为2
+    int num_states = 5;
+    int num_symbols = 2; // 假设字母表大小为2
 
-//     initializeDFA(&dfa, num_states, num_symbols);
-//     setAcceptState(&dfa, 2);
-//     setTransition(&dfa, 0, 0, 1);
-//     setTransition(&dfa, 0, 1, 0);
-//     setTransition(&dfa, 1, 0, 2);
-//     setTransition(&dfa, 1, 1, 0);
-//     setTransition(&dfa, 2, 0, 1);
-//     setTransition(&dfa, 2, 1, 2);
-//     setTransition(&dfa, 3, 0, 3);
-//     setTransition(&dfa, 3, 1, 4);
-//     setTransition(&dfa, 4, 0, 3);
-//     setTransition(&dfa, 4, 1, 4);
+    initializeDFA(&dfa, num_states, num_symbols);
+    setAcceptState(&dfa, 2);
+    setTransition(&dfa, 0, 0, 1);
+    setTransition(&dfa, 0, 1, 0);
+    setTransition(&dfa, 1, 0, 2);
+    setTransition(&dfa, 1, 1, 0);
+    setTransition(&dfa, 2, 0, 1);
+    setTransition(&dfa, 2, 1, 2);
+    setTransition(&dfa, 3, 0, 3);
+    setTransition(&dfa, 3, 1, 4);
+    setTransition(&dfa, 4, 0, 3);
+    setTransition(&dfa, 4, 1, 4);
 
-//     hopcroftMinimizeDFA(&dfa);
+    hopcroftMinimizeDFA(&dfa,&dfa2);
 
-//      printTransitionMatrix(&dfa);
-//     printEmptyTransitionMatrix(&dfa);       
-//     return 0;
-// }
+    printTransitionMatrix(&dfa2);
+    printEmptyTransitionMatrix(&dfa2);       
+    return 0;
+}

@@ -43,19 +43,28 @@ void printEmptyTransitionMatrix(DFA *dfa);
 
 // 计算闭包
 void epsilonClosure(DFA *dfa, int state, bool *visited, int *closure);
+// 比较闭包
+bool compareClosure(DFA *dfa, int *closure1,int *closure2);
+// 合并闭包
+void mergeClosure(DFA *dfa, int *closure1,int *closure2);
+// 清空闭包
+void clearClosure(DFA *dfa, bool *visited,int *closure);
 
 // 将NFA转化为DFA
 void convertNFAToDFA(DFA *nfa, DFA *dfa);
 
 // DFA最小化算法
-void hopcroftMinimizeDFA(DFA *dfa);
+void hopcroftMinimizeDFA(DFA *dfa,DFA *new_dfa);
 
 // 声明符号表
 extern char sym_maps[100];
 // 符号表大小
 extern int sym_maps_size;
-// 正则表达式生成的NFA
-extern DFA * NFA_result;
 
 // 符号表查找
 int find(char s);
+//符号表插入函数
+int insert(char s);
+
+// 正则表达式生成的NFA
+extern DFA * NFA_result;

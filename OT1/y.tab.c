@@ -89,12 +89,11 @@ extern int yyparse();
 FILE* yyin;
 void yyerror(const char* s);
 
-//符号表插入函数
-int insert(char s);
+
 
 
 /* Line 189 of yacc.c  */
-#line 98 "y.tab.c"
+#line 97 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -144,7 +143,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 148 "y.tab.c"
+#line 147 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -429,8 +428,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    50,    51,    54,    59,    65,    77,    89,
-     100,   111,   114,   121
+       0,    36,    36,    49,    50,    53,    58,    64,    76,    88,
+      99,   110,   113,   119
 };
 #endif
 
@@ -1336,18 +1335,18 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 37 "getDFA.y"
+#line 36 "getDFA.y"
     { 
-                    printTransitionMatrix((yyvsp[(2) - (3)]));
-                    printEmptyTransitionMatrix((yyvsp[(2) - (3)]));
+                    // printTransitionMatrix($2);
+                    // printEmptyTransitionMatrix($2);
                     setAcceptState((yyvsp[(2) - (3)]),(yyvsp[(2) - (3)])->num_states-1);
-                    printf("%d\n",runNFA((yyvsp[(2) - (3)]),"abaad"));
-                    DFA dfa;
+                    // printf("%d\n",runNFA($2,"abaad"));
+                    DFA dfa,dfa2;
                     convertNFAToDFA(&dfa, (yyvsp[(2) - (3)]));
-                    // hopcroftMinimizeDFA(&dfa);
-                    printTransitionMatrix(&dfa);
-                    printEmptyTransitionMatrix(&dfa);   
-                    printf("%d\n",runDFA(&dfa,"abaad"));
+                    hopcroftMinimizeDFA(&dfa,&dfa2);
+                    printTransitionMatrix(&dfa2);
+                    printEmptyTransitionMatrix(&dfa2);   
+                    printf("%d\n",runDFA(&dfa2,"abaad"));
                     (yyval) = (yyvsp[(2) - (3)]);
                 }
     break;
@@ -1355,7 +1354,7 @@ yyreduce:
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 54 "getDFA.y"
+#line 53 "getDFA.y"
     { 
                 mergeNFA((yyvsp[(1) - (2)]) , (yyvsp[(2) - (2)]), -1);
                 (yyval) = (yyvsp[(1) - (2)]);
@@ -1366,7 +1365,7 @@ yyreduce:
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 59 "getDFA.y"
+#line 58 "getDFA.y"
     {
             (yyval) = (yyvsp[(1) - (1)]);
         }
@@ -1375,7 +1374,7 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 65 "getDFA.y"
+#line 64 "getDFA.y"
     { 
                 DFA* st = (DFA *)malloc(sizeof(DFA));
                 DFA* ed = (DFA *)malloc(sizeof(DFA));
@@ -1393,7 +1392,7 @@ yyreduce:
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 77 "getDFA.y"
+#line 76 "getDFA.y"
     { 
                 DFA* st = (DFA *)malloc(sizeof(DFA));
                 DFA* ed = (DFA *)malloc(sizeof(DFA));
@@ -1411,7 +1410,7 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 89 "getDFA.y"
+#line 88 "getDFA.y"
     { 
                 DFA* st = (DFA *)malloc(sizeof(DFA));
                 DFA* ed = (DFA *)malloc(sizeof(DFA));
@@ -1428,7 +1427,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 100 "getDFA.y"
+#line 99 "getDFA.y"
     { 
                 DFA* st = (DFA *)malloc(sizeof(DFA));
                 DFA* ed = (DFA *)malloc(sizeof(DFA));
@@ -1445,7 +1444,7 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 111 "getDFA.y"
+#line 110 "getDFA.y"
     {
             (yyval) = (yyvsp[(2) - (3)]);
             }
@@ -1454,10 +1453,9 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 114 "getDFA.y"
+#line 113 "getDFA.y"
     { 
             int temp = (yyvsp[(1) - (1)])->start_state;
-            printf("%d,%d\n",temp,sym_maps_size);
             initializeDFA((yyvsp[(1) - (1)]), 2 ,sym_maps_size);
             setTransition((yyvsp[(1) - (1)]), 0, temp, 1);
             (yyval) = (yyvsp[(1) - (1)]);
@@ -1467,7 +1465,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 121 "getDFA.y"
+#line 119 "getDFA.y"
     { 
             int temp = (yyvsp[(1) - (1)])->start_state;
             initializeDFA((yyvsp[(1) - (1)]), 2 ,sym_maps_size);
@@ -1479,7 +1477,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1483 "y.tab.c"
+#line 1481 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1691,7 +1689,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 129 "getDFA.y"
+#line 127 "getDFA.y"
 
 
 // programs section
@@ -1745,32 +1743,12 @@ int yylex()
         
     }
 }
-int insert(char s){
-    // //为空集留一个位置
-    // if(sym_maps[0] == 0){
-    //     sym_maps[0] = '_';
-    //     sym_maps_size ++;
-    // }
-    for(int i = 0;i<100;i++){
-        //已存在该符号,返回并前置(优先队列待实现)
-        if(sym_maps[i] == s)
-            return i;
-        //符号表项不存在,表明已到结尾,新建一个即可
-        if(sym_maps[i] == 0){ 
-            sym_maps[i]=s;
-            sym_maps_size ++;
-            return i;
-        }
-    }
-    yyerror("The Symbol Table is full!");
-	exit(1);
-}
 
 int main(void)
 {
     yyin=stdin;
     do{
-        printf("Please enter a postfix expression:\n");
+        printf("Please enter a expression:\n");
         yyparse();
     }while(!feof(yyin));
     return 0;
