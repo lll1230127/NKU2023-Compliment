@@ -1,0 +1,22 @@
+作用域0的符号表
+NAME:a	 ROW:1	 COL:0	 ATTRIBUTE:0x7ffcab2bf1d0
+
+作用域1的符号表
+NAME:a	 ROW:1	 COL:8	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:b	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+
+作用域2的符号表
+NAME:func	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:i	 ROW:1	 COL:0	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:result	 ROW:1	 COL:0	 ATTRIBUTE:0x7ffcab2bf1d0
+
+作用域3的符号表
+NAME:i	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:putint	 ROW:1	 COL:0	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:result	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+
+作用域4的符号表
+NAME:a	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:func	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+NAME:main	 ROW:1	 COL:4	 ATTRIBUTE:0x7ffcab2bf1d0
+
